@@ -21,11 +21,11 @@ model User {
   userImage  String?
   bio        String?
   posts      Post[]
-  sharers    Share[]         @relation("sharer")
-  likers     Like[]          @relation("likers")
-  commenters Comment[]       @relation("commenters")
-  followedBy FollowRequest[] @relation("followedBy")
-  following  FollowRequest[] @relation("following")
+  shares    Share[]         @relation("sharer")
+  likes     Like[]          @relation("likers")
+  comments Comment[]       @relation("commenters")
+  followedBy FollowRequest[] @relation("followed")
+  following  FollowRequest[]  @relation("follower")
 }
 
 model Post {
@@ -39,14 +39,14 @@ model Post {
   shared_posts    Share[]   @relation("shared_posts")
   liked_posts     Like[]    @relation("liked_posts")
   commented_posts Comment[] @relation("commented_posts")
-  poster          User      @relation(fields: [posterId], references: [id])
+  poster          User      @relation(fields: [posterId], references: [id],onDelete: Cascade)
   posterId        Int
 }
 
 model Share {
-  shared_post   Post @relation("shared_posts", fields: [shared_postId], references: [id])
+  shared_post   Post @relation("shared_posts", fields: [shared_postId], references: [id],onDelete: Cascade)
   shared_postId Int
-  sharer        User @relation("sharer", fields: [sharerId], references: [id])
+  sharer        User @relation("sharer", fields: [sharerId], references: [id],onDelete: Cascade)
   sharerId      Int
 
   @@id([sharerId, shared_postId])
@@ -55,39 +55,38 @@ model Share {
 model FollowRequest {
   state          String       @default("pending")
   createdAt      DateTime     @default(now())
-  followedBy     User         @relation("followedBy", fields: [followedById], references: [id])
-  followedById   Int
-  following      User         @relation("following", fields: [followingId], references: [id])
-  followingId    Int
+  followed       User         @relation("followed", fields: [followedId], references: [id])
+  followedId     Int
+  follower       User         @relation("follower", fields: [followerId], references: [id])
+  followerId     Int
   notification   Notification @relation(fields: [notificationId], references: [id])
   notificationId Int          @unique
 
-  @@id([followingId, followedById])
+  @@id([followerId, followedId])
 }
 
 model Like {
   createdAt      DateTime     @default(now())
-  liked_post     Post         @relation("liked_posts", fields: [liked_postId], references: [id])
+  liked_post     Post         @relation("liked_posts", fields: [liked_postId], references: [id],onDelete: Cascade)
   liked_postId   Int
-  liker          User         @relation("likers", fields: [likerId], references: [id])
+  liker          User         @relation("likers", fields: [likerId], references: [id],onDelete: Cascade)
   likerId        Int
-  notification   Notification @relation(fields: [notificationId], references: [id])
-  notificationId Int          @unique
+  notification   Notification? @relation(fields: [notificationId], references: [id])
+  notificationId Int?          @unique
 
   @@id([likerId, liked_postId])
 }
 
 model Comment {
+  id               Int          @id @default(autoincrement())
   createdAt        DateTime     @default(now())
   body             String
-  commented_post   Post         @relation("commented_posts", fields: [commented_postId], references: [id])
+  commented_post   Post         @relation("commented_posts", fields: [commented_postId], references: [id],onDelete: Cascade)
   commented_postId Int
-  commenter        User         @relation("commenters", fields: [commenterId], references: [id])
+  commenter        User         @relation("commenters", fields: [commenterId], references: [id],onDelete: Cascade)
   commenterId      Int
-  notification     Notification @relation(fields: [notificationId], references: [id])
-  notificationId   Int          @unique
-
-  @@id([commenterId, commented_postId])
+  notification     Notification? @relation(fields: [notificationId], references: [id])
+  notificationId   Int?          @unique
 }
 
 model Notification {

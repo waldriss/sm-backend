@@ -16,10 +16,24 @@ export interface dataToUpdateInterface {
   bio?: string;
 }
 
+export interface ClerkdataToUpdateInterface {
+  firstName?: string;
+  username?: string;
+}
 
 export interface followRequest extends Request {
   body: {
-   followerId:number;
-   followedId:number;
+   followerId:string;
+   followedId:string;
+  };
+}
+
+
+
+export interface getExploreUsersRequest extends Request {
+  query: {
+    page?: string;
+    search: string;
+    userId?:string;
   };
 }

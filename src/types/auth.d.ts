@@ -10,11 +10,11 @@ export interface RegisterRequest extends Request {
 }
 
 
-export interface SignInRequest extends Request {
+export interface SigInOrSignUpGoogleRequest extends Request {
     body: {
         email: string;
         name: string;
-        username:string;
+        userId:string;
     };
 }
 
