@@ -440,7 +440,7 @@ export const deleteFollow = async (req: followRequest, res: Response) => {
   try {
     const followerId = parseInt(req.body.followerId);
     const followedId = parseInt(req.body.followedId);
-    //if(followerId!=req.AuthentifiedUserId) return res.status(401).json({ message: "Unauthorized" });
+    if(followerId!=req.AuthentifiedUserId&&followedId!=req.AuthentifiedUserId) return res.status(401).json({ message: "Unauthorized" });
 
     const deleted_follow_request = await prisma.followRequest.deleteMany({
       where: {
