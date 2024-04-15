@@ -320,7 +320,8 @@ export const UnSharePost = async (req: likeSharePostRequest, res: Response) => {
 
 export const LikePost = async (req: likeSharePostRequest, res: Response) => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    //await new Promise(resolve => setTimeout(resolve, 2000));
     
     const { postId, userId } = req.body;
     const likerId = parseInt(userId);
@@ -422,6 +423,7 @@ export const LikePost = async (req: likeSharePostRequest, res: Response) => {
 
 export const DisLikePost = async (req: likeSharePostRequest, res: Response) => {
   try {
+   
     const { postId, userId } = req.body;
     const likerId = parseInt(userId);
     const liked_postId = parseInt(postId);
