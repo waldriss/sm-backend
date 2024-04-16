@@ -106,10 +106,10 @@ export const getHomePosts = async (req: getHomePostsRequest, res: Response) => {
 
     const { page = "1" } = req.query;
 
-    const offset = (parseInt(page) - 1) * 1;
+    const offset = (parseInt(page) - 1) * 10;
 
     const posts = await prisma.post.findMany({
-      take: +1,
+      take: +10,
       skip: +offset,
       orderBy: {
         createdAt: "desc",
@@ -163,14 +163,14 @@ export const getExplorePosts = async (
   try {
     const { page = "1", search, userId } = req.query;
 
-    const offset = (parseInt(page) - 1) * 1;
+    const offset = (parseInt(page) - 1) * 10;
     if (!userId) {console.log("here");
       return res.status(401).json({ message: "Unauthorized" });
     } else {
       if (parseInt(userId) != req.AuthentifiedUserId){console.log("here"); return res.status(401).json({ message: "Unauthorized" });
 }
       const posts = await prisma.post.findMany({
-        take: +1,
+        take: +10,
         skip: +offset,
         where: {
           OR: [

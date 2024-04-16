@@ -18,9 +18,9 @@ export const getNotifications = async (
   {
       return res.status(401).json({ message: "Unauthorized" });}
 
-    const offset = (parseInt(page) - 1) * 1;
+    const offset = (parseInt(page) - 1) * 10;
     const notifications = await prisma.notification.findMany({
-      take: +1,
+      take: +10,
       skip: +offset,
       orderBy: {
         createdAt: "desc",

@@ -20,6 +20,7 @@ export const updateUser = async (req: updateUserRequest, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
 
     const { name, username, bio } = req.body;
+    console.log(bio);
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user) {
@@ -37,11 +38,15 @@ export const updateUser = async (req: updateUserRequest, res: Response) => {
       if (bio != undefined) {
         dataToUpdate.bio = bio;
       }
+      else{
+        dataToUpdate.bio="";
+      }
       if (req.file != undefined) {
         const userImage = req.file;
         const imageUrl = await uploadProfileImage(userImage);
         dataToUpdate.userImage = imageUrl;
       }
+      console.log(dataToUpdate);
 
       const updatedUser = await prisma.user.update({
         where: { id: userId },
@@ -198,14 +203,14 @@ export const getExploreUsers = async (
   try {
     const { page = "1", search = "", userId } = req.query;
 
-    const offset = (parseInt(page) - 1) * 1;
+    const offset = (parseInt(page) - 1) * 10;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     } else {
       if (parseInt(userId) != req.AuthentifiedUserId)
         return res.status(401).json({ message: "Unauthorized" });
       const users = await prisma.user.findMany({
-        take: +1,
+        take: +10,
         skip: +offset,
         where: {
           OR: [

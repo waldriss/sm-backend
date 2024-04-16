@@ -35,21 +35,17 @@ export const uploadProfileImage = async (imageFile: IFile):Promise<string> => {
 
 export const uploadPostImage = async (imageFile: IFile):Promise<string> => {
   try {
-    console.log(imageFile);
     const imageFormat = imageFile.mimetype.split("/")[1] || "jpeg";
     const base64Image = `data:image/${imageFormat};base64,${imageFile.buffer.toString(
       "base64"
     )}`;
-    console.log("work1");
 
     const result = await cloudinary.uploader.upload(base64Image, {
       folder: "PostImages",
       format: "webp",
     });
-    console.log("work2");
     return result.secure_url;
   } catch (error) {
-    console.log(error);
    
     throw new Error("Failed to upload image");
   }
