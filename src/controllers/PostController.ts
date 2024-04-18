@@ -179,16 +179,9 @@ export const getExplorePosts = async (
             { tags: { hasSome: [search ? search : ""] } },
           ],
         },
-        orderBy: [
-          {
-            liked_posts: {
-              _count: "desc",
-            },
-          },
-          {
-            id: "asc",
-          },
-        ],
+        orderBy: {
+          createdAt: "desc",
+        },
         select: {
           _count: {
             select: {
