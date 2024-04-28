@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import {
   ClerkdataToUpdateInterface,
@@ -37,16 +37,14 @@ export const updateUser = async (req: updateUserRequest, res: Response) => {
 
       if (bio != undefined) {
         dataToUpdate.bio = bio;
-      }
-      else{
-        dataToUpdate.bio="";
+      } else {
+        dataToUpdate.bio = "";
       }
       if (req.file != undefined) {
         const userImage = req.file;
         const imageUrl = await uploadProfileImage(userImage);
         dataToUpdate.userImage = imageUrl;
       }
-      console.log(dataToUpdate);
 
       const updatedUser = await prisma.user.update({
         where: { id: userId },
@@ -68,6 +66,11 @@ export const updateUser = async (req: updateUserRequest, res: Response) => {
       return res.status(404).json({ message: "user not found" });
     }
   } catch (err: any) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2002") {
+        return res.status(401).json({ message: "username already used." });
+      }
+    }
     return res.status(500).json({ message: err.message });
   }
 };
@@ -136,7 +139,6 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const getAuthenticatedUser = async (req: Request, res: Response) => {
   try {
-   
     const userId = parseInt(req?.params?.id);
     if (userId != req.AuthentifiedUserId)
       return res.status(401).json({ message: "Unauthorized" });
@@ -150,7 +152,6 @@ export const getAuthenticatedUser = async (req: Request, res: Response) => {
         username: true,
       },
     });
- 
 
     if (user) {
       return res.status(200).json({ user: user });
@@ -445,7 +446,11 @@ export const deleteFollow = async (req: followRequest, res: Response) => {
   try {
     const followerId = parseInt(req.body.followerId);
     const followedId = parseInt(req.body.followedId);
-    if(followerId!=req.AuthentifiedUserId&&followedId!=req.AuthentifiedUserId) return res.status(401).json({ message: "Unauthorized" });
+    if (
+      followerId != req.AuthentifiedUserId &&
+      followedId != req.AuthentifiedUserId
+    )
+      return res.status(401).json({ message: "Unauthorized" });
 
     const deleted_follow_request = await prisma.followRequest.deleteMany({
       where: {
